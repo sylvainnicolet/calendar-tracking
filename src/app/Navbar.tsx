@@ -20,6 +20,7 @@ export default function Navbar() {
           <a
             target='_blank'
             href='https://github.com/sylvainnicolet/calendar-events-app'
+            rel='noopener noreferrer'
           >
             <Github size='1rem' />
           </a>

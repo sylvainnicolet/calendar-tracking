@@ -33,12 +33,20 @@ import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 
 const FormSchema = z.object({
-  calendarUrl: z.string({
-    required_error: 'Calendar URL is required',
-  }),
-  description: z.string({
-    required_error: 'Description is required',
-  }),
+  calendarUrl: z
+    .string({
+      required_error: 'Calendar URL is required',
+    })
+    .min(1, {
+      message: 'Calendar URL is required',
+    }),
+  description: z
+    .string({
+      required_error: 'Description is required',
+    })
+    .min(1, {
+      message: 'Description is required',
+    }),
   startDate: z.date({
     required_error: 'Start date is required',
   }),
@@ -47,12 +55,12 @@ const FormSchema = z.object({
   }),
 });
 
-export function DatePickerForm() {
+export function FilterEventsForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      calendarUrl: undefined,
-      description: undefined,
+      calendarUrl: '',
+      description: '',
       startDate: subYears(new Date(), 1),
       endDate: new Date(),
     },

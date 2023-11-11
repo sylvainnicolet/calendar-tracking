@@ -1,9 +1,9 @@
-import { DatePickerForm } from '@/app/DatePickerForm';
+import { FilterEventsForm } from '@/app/FilterEventsForm';
 
 export default function Home() {
   return (
     <main className=''>
-      <DatePickerForm />
+      <FilterEventsForm />
     </main>
   );
 }
