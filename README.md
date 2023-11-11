@@ -1,6 +1,6 @@
 # Calendar Tracking
 
-Calendar Tracking is a simple web application that allows users to find and track events.
+Calendar Tracking is a simple web application that allows users to track events.
 
 ![Calendar Tracking](./public/screenshot.png)
 
