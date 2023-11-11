@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
+import { format, subYears } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -9,9 +9,15 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,6 +33,9 @@ import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 
 const FormSchema = z.object({
+  calendarUrl: z.string({
+    required_error: 'Calendar URL is required',
+  }),
   description: z.string({
     required_error: 'Description is required',
   }),
@@ -41,9 +50,16 @@ const FormSchema = z.object({
 export function DatePickerForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      calendarUrl: undefined,
+      description: undefined,
+      startDate: subYears(new Date(), 1),
+      endDate: new Date(),
+    },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log(data);
     toast({
       title: 'You submitted the following values:',
       description: (
@@ -55,116 +71,134 @@ export function DatePickerForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-        <FormField
-          name='description'
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className='flex flex-col'>
-              <FormLabel>Description</FormLabel>
-              <Input
-                {...field}
-                placeholder='Enter description'
-                className='w-[240px]'
+    <Card className='w-full'>
+      <CardHeader>
+        <CardTitle>Filter events</CardTitle>
+        <CardDescription>
+          Filter events by description and date range.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <FormField
+              control={form.control}
+              name='calendarUrl'
+              render={({ field }) => (
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Calendar URL</FormLabel>
+                  <Input
+                    {...field}
+                    placeholder='Enter description'
+                    className='w-full max-w-[600px]'
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Description</FormLabel>
+                  <Input
+                    {...field}
+                    placeholder='Enter description'
+                    className='w-full max-w-[600px]'
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className='flex flex-col sm:flex-row gap-4 w-full max-w-[600px]'>
+              <FormField
+                control={form.control}
+                name='startDate'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Events from</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-full sm:w-[250px] pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, 'PPP')
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          // disabled={(date) =>
+                          // 	date > new Date() || date < new Date("1900-01-01")
+                          // }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <FormDescription>
-                Set the description to filter events by.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='startDate'
-          render={({ field }) => (
-            <FormItem className='flex flex-col'>
-              <FormLabel>Start date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={'outline'}
-                      className={cn(
-                        'w-[240px] pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto p-0' align='start'>
-                  <Calendar
-                    mode='single'
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    // disabled={(date) =>
-                    // 	date > new Date() || date < new Date("1900-01-01")
-                    // }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Set the first date that you want to see events for.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='endDate'
-          render={({ field }) => (
-            <FormItem className='flex flex-col'>
-              <FormLabel>End date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={'outline'}
-                      className={cn(
-                        'w-[240px] pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto p-0' align='start'>
-                  <Calendar
-                    mode='single'
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    // disabled={(date) =>
-                    // 	date > new Date() || date < new Date("1900-01-01")
-                    // }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Set the last date that you want to see events for.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type='submit'>Submit</Button>
-      </form>
-    </Form>
+              <FormField
+                control={form.control}
+                name='endDate'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Events to</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-full sm:w-[250px] pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, 'PPP')
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          // disabled={(date) =>
+                          // 	date > new Date() || date < new Date("1900-01-01")
+                          // }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Button type='submit'>Filter</Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
