@@ -31,7 +31,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useToast } from '@/components/ui/use-toast';
-import { filterEvents, parseICalData } from '@/lib/IcalHelper';
+import { filterEvents, parseICalData, sortEventsByEndDate} from "@/lib/IcalHelper";
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 
@@ -85,7 +85,8 @@ export function FilterEventsForm({ onEvents }: { onEvents: Function }) {
         data.endDate,
         data.description
       );
-      onEvents(filteredEvents);
+      const sortedEvents = sortEventsByEndDate(filteredEvents);
+      onEvents(sortedEvents);
     } catch (error) {
       toast({
         title: 'Error',

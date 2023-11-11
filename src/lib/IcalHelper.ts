@@ -52,3 +52,10 @@ export function filterEvents(
     );
   });
 }
+
+
+export function sortEventsByEndDate(events: CalEvent[]) {
+  return events.sort((a, b) => {
+    return a.endDate.getTime() - b.endDate.getTime();
+  });
+}
