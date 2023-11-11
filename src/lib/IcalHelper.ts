@@ -1,5 +1,6 @@
 // @ts-ignore
 import { CalEvent } from '@/model/CalEvent';
+// @ts-ignore
 import ical from 'ical.js';
 
 function removeHtmlTags(str: string): string {
@@ -22,6 +23,7 @@ export function parseICalData(icalData: string): CalEvent[] {
   return events.map((eventComp: any) => {
     const icalEvent = new ical.Event(eventComp);
     return {
+      id: icalEvent.uid,
       summary: icalEvent.summary,
       startDate: icalEvent.startDate.toJSDate(),
       endDate: icalEvent.endDate.toJSDate(),

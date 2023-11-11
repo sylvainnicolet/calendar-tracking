@@ -48,7 +48,7 @@ const FormSchema = z.object({
       required_error: 'Description is required',
     })
     .min(1, {
-      message: 'Description is required',
+      message: 'Calendar URL is required',
     }),
   startDate: z.date({
     required_error: 'Start date is required',
@@ -58,7 +58,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function FilterEventsForm() {
+export function FilterEventsForm({ onEvents }: { onEvents: Function }) {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -85,7 +85,7 @@ export function FilterEventsForm() {
         data.endDate,
         data.description
       );
-      console.log(filteredEvents);
+      onEvents(filteredEvents);
     } catch (error) {
       toast({
         title: 'Error',
