@@ -30,7 +30,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useToast } from '@/components/ui/use-toast';
+import { filterEvents, parseICalData } from '@/lib/IcalHelper';
 import { cn } from '@/lib/utils';
+import axios from 'axios';
 
 const FormSchema = z.object({
   calendarUrl: z
@@ -56,6 +59,8 @@ const FormSchema = z.object({
 });
 
 export function FilterEventsForm() {
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -66,16 +71,36 @@ export function FilterEventsForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-  }
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    try {
+      const response = await axios.get('/api/calendar', {
+        params: {
+          calendarUrl: data.calendarUrl,
+        },
+      });
+      const parsedEvents = parseICalData(response.data);
+      const filteredEvents = filterEvents(
+        parsedEvents,
+        data.startDate,
+        data.endDate,
+        data.description
+      );
+      console.log(filteredEvents);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Could not fetch calendar data from the URL',
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <Card className='w-full'>
       <CardHeader>
         <CardTitle>Filter events</CardTitle>
         <CardDescription>
-          Filter events by description and date range.
+          Filter events from iCal calendar by description and date range.
         </CardDescription>
       </CardHeader>
       <CardContent>
