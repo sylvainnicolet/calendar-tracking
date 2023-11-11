@@ -18,6 +18,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,7 +30,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 
 const FormSchema = z.object({
@@ -68,14 +68,6 @@ export function FilterEventsForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
   }
 
   return (
@@ -97,10 +89,11 @@ export function FilterEventsForm() {
                   <FormLabel>Calendar URL</FormLabel>
                   <Input
                     {...field}
-                    placeholder='Enter description'
+                    placeholder='Enter calendar URL'
                     className='w-full max-w-[600px]'
                   />
                   <FormMessage />
+                  <FormDescription>Use iCal format.</FormDescription>
                 </FormItem>
               )}
             />
