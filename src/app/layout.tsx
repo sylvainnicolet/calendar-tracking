@@ -1,8 +1,7 @@
+import Navbar from '@/app/Navbar';
+import { ThemeProvider } from '@/components/theme-provider';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Calendar events App',
@@ -16,8 +15,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
-        <div className='p-4 container'>{children}</div>
+      <body>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <div className='p-4 container'>{children}</div>
+        </ThemeProvider>
       </body>
     </html>
   );
