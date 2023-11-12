@@ -48,7 +48,7 @@ const FormSchema = z.object({
       required_error: 'Description is required',
     })
     .min(1, {
-      message: 'Calendar URL is required',
+      message: 'Description is required',
     }),
   startDate: z.date({
     required_error: 'Start date is required',
