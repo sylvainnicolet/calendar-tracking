@@ -31,7 +31,11 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useToast } from '@/components/ui/use-toast';
-import { filterEvents, parseICalData, sortEventsByEndDate} from "@/lib/IcalHelper";
+import {
+  filterEvents,
+  parseICalData,
+  sortEventsByEndDate,
+} from '@/lib/IcalHelper';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 
@@ -112,11 +116,12 @@ export function FilterEventsForm({ onEvents }: { onEvents: Function }) {
               name='calendarUrl'
               render={({ field }) => (
                 <FormItem className='flex flex-col'>
-                  <FormLabel>Calendar URL</FormLabel>
+                  <FormLabel htmlFor='calendarUrl'>Calendar URL</FormLabel>
                   <Input
                     {...field}
                     placeholder='Enter calendar URL'
                     className='w-full max-w-[600px]'
+                    id='calendarUrl'
                   />
                   <FormMessage />
                   <FormDescription>Use iCal format.</FormDescription>
@@ -128,11 +133,12 @@ export function FilterEventsForm({ onEvents }: { onEvents: Function }) {
               name='description'
               render={({ field }) => (
                 <FormItem className='flex flex-col'>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel htmlFor='description'>Description</FormLabel>
                   <Input
                     {...field}
                     placeholder='Enter description'
                     className='w-full max-w-[600px]'
+                    id='description'
                   />
                   <FormMessage />
                 </FormItem>
