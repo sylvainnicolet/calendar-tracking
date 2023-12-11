@@ -2,7 +2,6 @@ import Navbar from '@/app/Navbar';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -18,11 +17,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <Script
-        defer
-        data-domain='calendar-tracking.hescsen.com'
-        src={'https://plausible.io/js/script.js'}
-      ></Script>
       <body>
         <ThemeProvider
           attribute='class'
