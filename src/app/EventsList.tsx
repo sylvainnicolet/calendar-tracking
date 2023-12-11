@@ -102,6 +102,7 @@ export function EventsList({ events }: { events: CalEvent[] }) {
       ),
       '',
     ];
+    // @ts-ignore
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
