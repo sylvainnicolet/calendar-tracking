@@ -16,11 +16,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { CalEvent } from '@/model/CalEvent';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 export function EventsList({ events }: { events: CalEvent[] }) {
-
   // This function is used to export the events to a CSV file.
-  function exportToCsv(filename: string, rows: CalEvent[]) {
+  function exportToCSV(filename: string, rows: CalEvent[]) {
     const processRow = (row: CalEvent) => {
       const values = [
         row.startDate.toLocaleDateString('fr-CH', {
@@ -59,6 +60,57 @@ export function EventsList({ events }: { events: CalEvent[] }) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  // This function is used to export the events to a PDF file.
+  function exportToPDF(filename: string, rows: CalEvent[]) {
+    const doc = new jsPDF('p', 'pt', 'a4');
+
+    // Add a title to the PDF document.
+    doc.setFontSize(20);
+    doc.text('Events', 40, 40);
+
+    const tableColumn = ['Start', 'End', 'Total', 'Title'];
+    const tableRows = rows.map((row) => [
+      row.startDate.toLocaleDateString('fr-CH', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }),
+      row.endDate.toLocaleDateString('fr-CH', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }),
+      (row.endDate.getTime() - row.startDate.getTime()) / 3600000,
+      row.summary,
+    ]);
+    const tableFooter = [
+      'Total',
+      '',
+      rows.reduce(
+        (total, event) =>
+          total +
+          (event.endDate.getTime() - event.startDate.getTime()) / 3600000,
+        0
+      ),
+      '',
+    ];
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      foot: [tableFooter],
+      startY: 60,
+      headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+      footStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+    });
+    doc.save(filename);
   }
 
   return (
@@ -134,8 +186,14 @@ export function EventsList({ events }: { events: CalEvent[] }) {
 
         {events.length > 0 && (
           <div className='flex justify-end mt-2'>
-            <Button onClick={() => exportToCsv('Events.csv', events)}>
+            <Button onClick={() => exportToCSV('Events.csv', events)}>
               Export to CSV
+            </Button>
+            <Button
+              className='ml-2'
+              onClick={() => exportToPDF('Events.pdf', events)}
+            >
+              Export to PDF
             </Button>
           </div>
         )}
